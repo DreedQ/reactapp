@@ -14,6 +14,8 @@ const WrapperStyled = styled.div<IStyle>`
     flex-wrap: ${props => props.flexWrap || null};
     background: ${props => props.background || null};
     border: ${props => props.border || null};
+    border-radius: ${props => props.border_radius || null};
+    padding: ${props => props.padding || null};
 `;
 
 const Wrapper: React.FC<IStyle> = props => {

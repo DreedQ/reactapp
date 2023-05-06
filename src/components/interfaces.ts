@@ -16,4 +16,5 @@ export interface IStyle {
     background?: string;
     direction?: string;
     border?: string;
+    border_radius?: string;
 }

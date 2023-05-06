@@ -56,15 +56,7 @@ const Timer: React.FC<IStyle> = React.memo(() => {
     };
 
     return (
-        <Wrapper
-            background='#dae7f7'
-            maxWidth='100%'
-            width='100%'
-            height='100vh'
-            direction='column'
-            justify='center'
-            align='center'
-        >
+        <Wrapper background='#dae7f7' maxWidth='100%' width='100%' direction='column' justify='center' align='center'>
             <h1>Timer</h1>
             <Wrapper width='550px' height='515px' justify='center' align='center'>
                 <CountCell>{count.minutes} </CountCell>
