@@ -4,6 +4,7 @@ export interface IStyle {
     justify?: string;
     width?: string;
     height?: string;
+    min_height?: string | null;
     margin?: string;
     padding?: string;
     font_size?: string;
@@ -17,4 +18,7 @@ export interface IStyle {
     direction?: string;
     border?: string;
     border_radius?: string;
+    box_shadow?: string;
+    visibility?: string;
+    onClick?: React.MouseEventHandler<HTMLElement>;
 }

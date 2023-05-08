@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { memo, useCallback, useEffect, useState } from 'react';
 import Wrapper from './Wrapper';
 import { ITodoModel } from '../models/todo.model';
 import { Todo } from './Todo';
@@ -6,6 +6,7 @@ import TodoCounter from './TodoCounter';
 import AddTodo from './AddTodo';
 import { IStyle } from './interfaces';
 import Button from './Button';
+import { util } from 'prettier';
 
 interface IUtility {
     countItems: number;
@@ -86,33 +87,59 @@ const TodoList: React.FC<IStyle> = () => {
         setUtilityValues({ ...utilityValues, countItems: filteredItems.length });
     }, [dataItems, filteredItems.length, utilityValues]);
 
-    const handleDeleteItem = (id: string) => {
-        setDataItems([...dataItems.filter(item => item.id !== id)]);
-    };
+    const handleDeleteItem = useCallback(
+        (id: string) => {
+            setDataItems([...dataItems.filter(item => item.id !== id)]);
+        },
+        [dataItems]
+    );
 
     const addNewTodoItem = (id: string, title: string, completed: boolean) => {
         setDataItems([...dataItems, { id: id, completed: completed, title: title }]);
     };
 
-    const handleRedux = (item: ITodoModel) => {
-        setDataItems([...dataItems.filter(el => item.id !== el.id), item]);
-    };
+    const handleRedux = useCallback(
+        (item: ITodoModel) => {
+            setDataItems([...dataItems.filter(el => item.id !== el.id), item]);
+        },
+        [dataItems]
+    );
 
     return (
-        <Wrapper background='#dae7f7' maxWidth='100%' width='100%' direction='column' justify='center' align='center'>
+        <Wrapper
+            background='#dae7f7'
+            maxWidth='100%'
+            width='100%'
+            height='100%'
+            direction='column'
+            justify='center'
+            align='center'
+        >
             {' '}
             <h1>Todo</h1>
             <AddTodo addNewTodoItem={addNewTodoItem} />
             <Wrapper align='center' border='solid 1px black' border_radius='20px' padding='10px'>
                 {' '}
                 <h2>Filters:</h2>
-                <Button onClick={() => setUtilityValues({ ...utilityValues, filter: null })} font_size='.8rem'>
+                <Button
+                    onClick={() => setUtilityValues({ ...utilityValues, filter: null })}
+                    font_size='.8rem'
+                    box_shadow={utilityValues.filter === null ? 'rgb(8 103 92) 0px 0px 14px 6px' : ''}
+                >
                     Show All Tasks
                 </Button>
-                <Button onClick={() => setUtilityValues({ ...utilityValues, filter: false })} font_size='.8rem'>
+                <Button
+                    onClick={() => setUtilityValues({ ...utilityValues, filter: false })}
+                    font_size='.8rem'
+                    box_shadow={utilityValues.filter === false ? 'rgb(8 103 92) 0px 0px 14px 6px' : ''}
+                >
                     Show Active Tasks
                 </Button>
-                <Button onClick={() => setUtilityValues({ ...utilityValues, filter: true })} font_size='.8rem'>
+                <Button
+                    onClick={() => setUtilityValues({ ...utilityValues, filter: true })}
+                    font_size='.8rem'
+                    box_shadow={utilityValues.filter === true ? 'rgb(8 103 92) 0px 0px 14px 6px' : ''}
+                >
                     Show completed Tasks
                 </Button>
             </Wrapper>
@@ -126,4 +153,4 @@ const TodoList: React.FC<IStyle> = () => {
     );
 };
 
-export default TodoList;
+export default memo(TodoList);

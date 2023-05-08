@@ -4,6 +4,7 @@ import styled from 'styled-components';
 
 const WrapperStyled = styled.div<IStyle>`
     max-width: ${props => props.maxWidth || '1040px'};
+    min-height: ${props => props.min_height || null};
     width: ${props => props.width || 'auto'};
     height: ${props => props.height || 'auto'};
     margin: ${props => props.margin || '0 auto'};
@@ -16,6 +17,7 @@ const WrapperStyled = styled.div<IStyle>`
     border: ${props => props.border || null};
     border-radius: ${props => props.border_radius || null};
     padding: ${props => props.padding || null};
+    visibility: ${props => props.visibility || 'visible'};
 `;
 
 const Wrapper: React.FC<IStyle> = props => {

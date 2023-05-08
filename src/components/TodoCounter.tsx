@@ -7,7 +7,7 @@ interface ICountTodos {
 const TodoCounter: React.FC<ICountTodos> = ({ countItems }) => {
     return (
         <div>
-            <h3>Todos - {countItems} </h3>
+            <h3>Todos: {countItems} </h3>
         </div>
     );
 };

@@ -18,7 +18,8 @@ const ButtonStyled = styled.button<IStyle>`
     margin: ${props => props.margin || '17px'};
     padding: ${props => props.padding || '17px'};
     font-size: ${props => props.font_size || '20px'};
-    box-shadow: -4px 3px 12px 0px #464545;
+    box-shadow: ${props => props.box_shadow || '-4px 3px 12px 0px #464545;'};
+    /* box-shadow: -4px 3px 12px 0px #464545; */
     background-color: grey;
     border: green;
     &:hover,
