@@ -1,4 +1,4 @@
-import { FunctionComponent } from 'react';
+import { FunctionComponent, memo, useCallback, useState } from 'react';
 import Input from './Input';
 import { ProductModel } from '../models/product.model';
 import ButtonOuter from './ButtonOuter';
@@ -7,21 +7,39 @@ interface ProductCreationFormProps {
     onSubmit: (product: Partial<ProductModel>) => void;
 }
 
-const ProductCreationForm: FunctionComponent<ProductCreationFormProps> = ({}) => {
-    const onSubmit = () => {
-        // handleSubmit();
-        let product = {
-            title: 'title',
-        };
-    };
+const ProductCreationForm: FunctionComponent<ProductCreationFormProps> = ({ onSubmit }) => {
+    const [product, setProduct] = useState<Partial<ProductModel>>({});
+
+    const changeTitle = useCallback(
+        (e: React.ChangeEvent<HTMLInputElement>) => {
+            setProduct({ ...product, title: e.target.value });
+        },
+        [product]
+    );
+
+    const changeDescription = useCallback(
+        (e: React.ChangeEvent<HTMLInputElement>) => {
+            setProduct({ ...product, description: e.target.value });
+        },
+        [product]
+    );
+
+    const handleSubmit = useCallback(() => {
+        if (!product.title) {
+            alert('Please enter a title.');
+            return;
+        }
+        onSubmit(product);
+        setProduct({});
+    }, [onSubmit, product]);
+
     return (
-        <form>
-            <Input value='title'></Input>
-            <Input value='description'></Input>
-            {/* <Input >Create</Input> */}
-            <ButtonOuter onClick={onSubmit}>Create</ButtonOuter>
-        </form>
+        <>
+            <Input value={product.title} defaultValue='title' sendInner={changeTitle} />
+            <Input value='description' sendInner={changeDescription} />
+            <ButtonOuter onClick={handleSubmit}>Create</ButtonOuter>
+        </>
     );
 };
 
-export default ProductCreationForm;
+export default memo(ProductCreationForm);

@@ -1,5 +1,5 @@
 import styled from 'styled-components';
-import { IStyle } from './interfaces';
+import { IStyle } from '.././interfaces';
 import React, { useEffect, useRef } from 'react';
 
 const InputCell = styled.input`

@@ -1,5 +1,5 @@
 import styled from 'styled-components';
-import { IStyle } from './interfaces';
+import { IStyle } from '.././interfaces';
 import React, { useEffect, useRef } from 'react';
 
 const InputCell = styled.input`
@@ -11,7 +11,6 @@ const InputCell = styled.input`
     border: none;
 `;
 interface IInput extends IStyle {
-    // ref?: MutableRefObject<HTMLInputElement | null>;
     type?: string;
     name?: string;
     placeholder?: string;

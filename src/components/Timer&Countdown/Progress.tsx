@@ -1,7 +1,7 @@
 import React from 'react';
-import { IStyle } from './interfaces';
+import { IStyle } from '.././interfaces';
 import styled from 'styled-components';
-import Wrapper from './Wrapper';
+import Wrapper from '.././Wrapper';
 
 interface IProps extends IStyle {
     percents: number;

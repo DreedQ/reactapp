@@ -14,11 +14,11 @@ const Description: FC<DescriptionProps> = ({ text, maxLength = maxLengthConstant
 
     return (
         <>
-            {text.length <= maxLength ? (
+            {text?.length <= maxLength ? (
                 <p>{text}</p>
             ) : (
                 <Wrapper direction='column'>
-                    {showText ? <p>{text}</p> : <p>{text.split('').slice(0, maxLength).join('')} ...</p>}
+                    {showText ? <p>{text}</p> : <p>{text?.split('').slice(0, maxLength).join('')} ...</p>}
 
                     {showText ? (
                         <Button

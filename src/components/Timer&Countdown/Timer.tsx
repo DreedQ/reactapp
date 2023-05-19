@@ -1,39 +1,24 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import Button from './Button';
-import Wrapper from './Wrapper';
-import styled from 'styled-components';
-import { IStyle } from './interfaces';
-
-const CountCell = styled.div`
-    display: flex;
-    width: 100%;
-    height: 100px;
-    justify-content: center;
-    background: #06a90c91;
-    border: 1px solid #fff;
-    align-items: center;
-    color: #fff;
-    font-size: 2rem;
-    box-shadow: -3px -3px 19px 12px #c38787a1 inset;
-`;
+import Button from '.././Button';
+import Wrapper from '.././Wrapper';
+import { IStyle } from '.././interfaces';
+import CountCell from './CountCell';
 
 const Timer: React.FC<IStyle> = React.memo(() => {
-    const [count, setCount] = useState({ minutes: 0, seconds: 0, milliseconds: 0 });
+    const [count, setCount] = useState(0);
+    const [timerID, setTimerID] = useState<NodeJS.Timer | number>(0);
     const [status, setStatus] = useState(false);
+    const [startTime, setStartTime] = useState(new Date().getTime());
+    const [temporaryTime, setTemporaryTime] = useState(0);
 
     let changeTime = useCallback(() => {
-        if (count.seconds >= 59) {
-            setCount({ minutes: ++count.minutes, seconds: 0, milliseconds: 0 });
-        } else if (count.milliseconds >= 99) {
-            setCount({ ...count, seconds: ++count.seconds, milliseconds: 0 });
-        } else {
-            setCount({ ...count, milliseconds: ++count.milliseconds });
-        }
-    }, [count]);
+        setCount(new Date().getTime() - startTime + temporaryTime);
+    }, [startTime, temporaryTime]);
 
     useEffect(() => {
         if (status) {
             let intervalID = setTimeout(() => changeTime(), 10);
+            setTimerID(intervalID);
             return () => clearInterval(intervalID);
         }
     }, [changeTime, count, status]);
@@ -41,19 +26,33 @@ const Timer: React.FC<IStyle> = React.memo(() => {
     const handStartStopTimer = () => {
         if (!status) {
             setStatus(true);
+            setStartTime(new Date().getTime());
+            clearInterval(timerID);
         } else {
             setStatus(false);
+            setTemporaryTime(count);
         }
     };
 
     const handClearTimer = () => {
         if (!status) {
             setStatus(false);
-            setCount({ minutes: 0, seconds: 0, milliseconds: 0 });
+            setCount(0);
+            setTemporaryTime(0);
         } else {
+            clearInterval(timerID);
             setStatus(false);
+            setTemporaryTime(count);
         }
     };
+
+    const formatTime = useCallback((time: number) => {
+        let date = new Date(time);
+        let ms = date.getMilliseconds().toString().slice(0, 2).padStart(2, '0');
+        let s = date.getSeconds().toString().padStart(2, '0');
+        let m = date.getMinutes().toString().padStart(2, '0');
+        return `${m}:${s}:${ms}`;
+    }, []);
 
     return (
         <Wrapper
@@ -67,13 +66,11 @@ const Timer: React.FC<IStyle> = React.memo(() => {
         >
             <h1>Timer</h1>
             <Wrapper width='550px' height='515px' justify='center' align='center'>
-                <CountCell>{count.minutes} </CountCell>
-                <CountCell>{count.seconds} </CountCell>
-                <CountCell>{count.milliseconds}</CountCell>
+                <CountCell>{formatTime(count)}</CountCell>
             </Wrapper>
             <Wrapper justify='space-around'>
                 <Button onClick={handStartStopTimer} width='250px'>
-                    Старт/Стоп/Пауза
+                    {!status && count === 0 ? 'Запустить' : status ? 'Пауза' : 'Вoзобновить'}
                 </Button>
                 <Button onClick={handClearTimer} width='250px'>
                     Сброс
