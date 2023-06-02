@@ -8,58 +8,30 @@ import InputSlider from './InputSlider';
 import audioFile from '../../assets/audio/alarm.wav';
 import CountCell from './CountCell';
 
-const Countdown: React.FC<IStyle> = React.memo(() => {
-    const [count, setCount] = useState({ sec: 0, min: 0, all: 0 });
+const Countdown: React.FC<IStyle> = () => {
+    const [count, setCount] = useState(0);
+    const [initStart, setInitStart] = useState(0);
     const [status, setStatus] = useState(false);
-    const [progress, setProgress] = useState({ percents: 0, maxSec: 0, nowSec: 0 });
 
     const handChange = useCallback(
         (e: React.ChangeEvent<HTMLInputElement> | React.WheelEvent<HTMLInputElement>) => {
             if (+e.currentTarget.value > 720 && e.currentTarget.name === 'min') return;
-            if (e.currentTarget.name === 'all') {
-                setCount({
-                    ...count,
-                    min: Math.floor(+e.currentTarget.value / 60),
-                    sec: +e.currentTarget.value - Math.floor(+e.currentTarget.value / 60) * 60,
-                    all: +e.currentTarget.value,
-                });
-            } else if (e.currentTarget.name === 'sec') {
-                setCount({
-                    ...count,
-                    sec: +e.currentTarget.value,
-                    all: count.min * 60 + count.sec,
-                });
-                if (count.sec >= 59) {
-                    setCount({ ...count, sec: 0, min: count.min + 1 });
+            if (e.currentTarget.name === 'sec') {
+                setCount(count - (count % 60) + +e.currentTarget.value);
+                if (+e.currentTarget.value === 0) {
+                    console.log('WARNING');
+                    setCount(count - 2);
                 }
-            } else if (count.min === 60) {
-                setCount({
-                    min: +e.currentTarget.value,
-                    all: +e.currentTarget.value * 60,
-                    sec: 0,
-                });
-            } else {
-                setCount({
-                    ...count,
-                    min: +e.currentTarget.value,
-                    all: +e.currentTarget.value * 60,
-                });
-            }
+            } else if (e.currentTarget.name === 'min') {
+                setCount((count % 60) + +e.currentTarget.value * 60);
+            } else setCount(+e.currentTarget.value);
         },
         [count]
     );
 
     const handStart = () => {
-        if (!status && progress.maxSec === 0) {
-            setStatus(true);
-            setProgress({
-                ...progress,
-                maxSec: count.min * 60 + count.sec,
-                nowSec: count.min * 60 + count.sec,
-                percents: +((progress.nowSec / progress.maxSec) * 100).toFixed(1),
-            });
-        }
         if (!status) {
+            setInitStart(count);
             setStatus(true);
         } else {
             setStatus(false);
@@ -68,8 +40,8 @@ const Countdown: React.FC<IStyle> = React.memo(() => {
 
     const handClear = () => {
         if (!status) {
-            setCount({ min: 0, sec: 0, all: 0 });
-            setProgress({ percents: 0, maxSec: 0, nowSec: 0 });
+            setCount(0);
+            setInitStart(0);
         } else setStatus(false);
     };
 
@@ -80,20 +52,13 @@ const Countdown: React.FC<IStyle> = React.memo(() => {
     };
 
     let countDown = useCallback(() => {
-        if (count.min === 0 && count.sec === 0) {
+        if (count === 0) {
             setStatus(false);
             sound();
-        } else if (count.sec <= 0) {
-            setCount({ min: --count.min, sec: 59, all: count.all - 1 });
         } else {
-            setCount({ ...count, sec: --count.sec, all: count.all - 1 });
+            setCount(count - 1);
         }
-        setProgress({
-            ...progress,
-            nowSec: count.min * 60 + count.sec,
-            percents: +(((count.min * 60 + count.sec) / progress.maxSec) * 100).toFixed(1),
-        });
-    }, [count, progress]);
+    }, [count]);
 
     useEffect(() => {
         if (status) {
@@ -102,7 +67,7 @@ const Countdown: React.FC<IStyle> = React.memo(() => {
                 clearInterval(interval);
             };
         }
-    }, [count, countDown, progress, status]);
+    }, [count, countDown, status]);
 
     return (
         <Wrapper
@@ -115,7 +80,7 @@ const Countdown: React.FC<IStyle> = React.memo(() => {
             align='center'
         >
             <h1>Countdown</h1>
-            <Progress {...progress} {...count} />
+            <Progress count={count} initStart={initStart} />
             <Wrapper width='550px' direction='column'>
                 <Wrapper>
                     <CountCell>
@@ -125,7 +90,7 @@ const Countdown: React.FC<IStyle> = React.memo(() => {
                             placeholder='Min'
                             onWheel={handChange}
                             onChange={handChange}
-                            value={count.min}
+                            value={Math.floor(count / 60)}
                             min={0}
                             max={60}
                             status={status}
@@ -139,7 +104,7 @@ const Countdown: React.FC<IStyle> = React.memo(() => {
                             placeholder='Sec'
                             onWheel={handChange}
                             onChange={handChange}
-                            value={count.sec}
+                            value={count % 60}
                             min={0}
                             max={60}
                             status={status}
@@ -154,7 +119,7 @@ const Countdown: React.FC<IStyle> = React.memo(() => {
                         name='all'
                         onChange={handChange}
                         onWheel={handChange}
-                        value={count.all}
+                        value={count}
                         min={0}
                         max={3600}
                         step={15}
@@ -172,6 +137,6 @@ const Countdown: React.FC<IStyle> = React.memo(() => {
             </Wrapper>
         </Wrapper>
     );
-});
+};
 
 export default Countdown;
